@@ -1,0 +1,8 @@
+server:
+  port: 28892
+  servlet:
+    context-path: /app
+
+spring:
+  application:
+    name: log-learn-app
