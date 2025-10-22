@@ -11,6 +11,7 @@
   <modules>
     <module>agent-learn</module>
     <module>app</module>
+    <module>only-main-app</module>
   </modules>
 
   <properties>
