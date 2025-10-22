@@ -51,27 +51,36 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.5.5</version>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.2</version>
         <configuration>
           <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
             <manifestEntries>
               <Premain-Class>cn.addenda.loglearn.LogLearnAgent</Premain-Class>
               <Can-Redefine-Classes>true</Can-Redefine-Classes>
               <Can-Retransform-Classes>true</Can-Retransform-Classes>
             </manifestEntries>
           </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.3.0</version>
         <executions>
           <execution>
-            <id>one_jar</id>
+            <id>copy-dependencies</id>
             <phase>package</phase>
             <goals>
-              <goal>single</goal>
+              <goal>copy-dependencies</goal>
             </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/../dist/lib/log</outputDirectory>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -106,9 +115,11 @@
                 <echo message="project.basedir: ${project.basedir}"/>
                 <echo message="project.build.directory: ${project.build.directory}"/>
                 <mkdir dir="${project.basedir}/../dist"/>
-                <copy file="${project.build.directory}/agent-learn-1.0-SNAPSHOT-jar-with-dependencies.jar"
-                      todir="${project.basedir}/../dist/"/>
                 <mkdir dir="${project.basedir}/../dist/lib/log"/>
+                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                      tofile="${project.basedir}/../dist/agent-learn.jar"/>
+                <copy file="${project.basedir}/src/main/resources/log4j2.xml"
+                      tofile="${project.basedir}/../dist/lib/log/log4j2.xml"/>
               </target>
             </configuration>
           </execution>
