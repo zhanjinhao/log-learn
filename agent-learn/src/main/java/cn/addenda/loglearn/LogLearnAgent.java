@@ -9,9 +9,6 @@ public class LogLearnAgent {
   static Logger log;
 
   static {
-    LogClassLoader.initDefaultLoader();
-    LogClassLoader defaultLoader = LogClassLoader.getDEFAULT_LOADER();
-
     // dist/lib/log/log4j2.xml
     log = MyLoggerFactory.getLogger(LogLearnAgent.class);
 
