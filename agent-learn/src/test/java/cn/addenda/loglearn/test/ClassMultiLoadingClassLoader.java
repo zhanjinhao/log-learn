@@ -1,5 +1,6 @@
-package cn.addenda.loglearn;
+package cn.addenda.loglearn.test;
 
+import cn.addenda.loglearn.AgentPackagePath;
 import lombok.Getter;
 
 import java.io.File;
@@ -14,17 +15,17 @@ import java.util.List;
 /**
  * 增加日志
  */
-public class LogClassLoader extends URLClassLoader {
+public class ClassMultiLoadingClassLoader extends URLClassLoader {
 
   @Getter
-  private static LogClassLoader DEFAULT_LOADER;
+  private static ClassMultiLoadingClassLoader DEFAULT_LOADER;
   private final List<String> logPrefixList = new ArrayList<>();
 
   static {
     ClassLoader.registerAsParallelCapable();
   }
 
-  public LogClassLoader(ClassLoader parent) {
+  public ClassMultiLoadingClassLoader(ClassLoader parent) {
     super(findJarUrls(), parent);
 
     logPrefixList.add("org.slf4j.");
@@ -136,7 +137,7 @@ public class LogClassLoader extends URLClassLoader {
   public static synchronized void initDefaultLoader() {
     if (DEFAULT_LOADER == null) {
       ClassLoader extensionClassLoader = ClassLoader.getSystemClassLoader().getParent();
-      DEFAULT_LOADER = new LogClassLoader(extensionClassLoader);
+      DEFAULT_LOADER = new ClassMultiLoadingClassLoader(extensionClassLoader);
     }
   }
 

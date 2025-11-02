@@ -11,6 +11,7 @@ import java.net.URI;
 public class MyLoggerFactory {
 
   static Class<?> loggerFactoryClass;
+  static Class<?> loggerFactoryClass2;
   // 添加Logger接口的引用
   private static Class<?> loggerInterface;
 
@@ -22,14 +23,20 @@ public class MyLoggerFactory {
 
   static {
     try {
-      LogClassLoader.initDefaultLoader();
-      LogClassLoader defaultLoader = LogClassLoader.getDEFAULT_LOADER();
+      LogClassLoader6.initDefaultLoader();
+      LogClassLoader6 defaultLoader = LogClassLoader6.getDEFAULT_LOADER();
 
       ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
       Thread.currentThread().setContextClassLoader(defaultLoader);
 
       try {
         loggerFactoryClass = Class.forName("org.slf4j.LoggerFactory", true, defaultLoader);
+        loggerFactoryClass2 = Class.forName("org.slf4j.LoggerFactory", true, defaultLoader);
+        if (loggerContextClass == loggerFactoryClass2) {
+          System.out.println("loggerContextClass == loggerContextClass2");
+        } else {
+          System.out.println("loggerContextClass != loggerContextClass2");
+        }
         loggerInterface = Class.forName("org.slf4j.Logger", true, defaultLoader);
         logManagerClass = Class.forName("org.apache.logging.log4j.LogManager", true, defaultLoader);
         loggerContextClass = Class.forName("org.apache.logging.log4j.core.LoggerContext", true, defaultLoader);

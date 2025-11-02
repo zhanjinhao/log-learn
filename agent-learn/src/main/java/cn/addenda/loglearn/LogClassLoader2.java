@@ -12,19 +12,19 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * 增加日志
+ * 移除 getResource() 和 getResources() 的实现
  */
-public class LogClassLoader extends URLClassLoader {
+public class LogClassLoader2 extends URLClassLoader {
 
   @Getter
-  private static LogClassLoader DEFAULT_LOADER;
+  private static LogClassLoader2 DEFAULT_LOADER;
   private final List<String> logPrefixList = new ArrayList<>();
 
   static {
     ClassLoader.registerAsParallelCapable();
   }
 
-  public LogClassLoader(ClassLoader parent) {
+  public LogClassLoader2(ClassLoader parent) {
     super(findJarUrls(), parent);
 
     logPrefixList.add("org.slf4j.");
@@ -58,11 +58,10 @@ public class LogClassLoader extends URLClassLoader {
   @Override
   protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
     synchronized (getClassLoadingLock(name)) {
-      Class<?> loadedClass = null;
-//      loadedClass = findLoadedClass(name);
-//      if (loadedClass != null) {
-//        return loadedClass;
-//      }
+      Class<?> loadedClass = findLoadedClass(name);
+      if (loadedClass != null) {
+        return loadedClass;
+      }
 
       boolean shouldIsolate = false;
       for (String prefix : logPrefixList) {
@@ -85,39 +84,14 @@ public class LogClassLoader extends URLClassLoader {
   }
 
   @Override
-  public URL findResource(String name) {
-    System.out.println("findResource : " + name);
-    URL resource = super.findResource(name);
-    if (resource != null) {
-      System.out.println("findResource success : " + resource);
-    }
-    return resource;
-  }
-
-  @Override
-  public Enumeration<URL> findResources(String name) throws IOException {
-    System.out.println("findResources : " + name);
-    Enumeration<URL> resources = super.findResources(name);
-    List<URL> urlList = new ArrayList<>();
-    while (resources.hasMoreElements()) {
-      urlList.add(resources.nextElement());
-    }
-    if (!urlList.isEmpty()) {
-      System.out.println("findResources success : " + urlList);
-    }
-
-    return super.findResources(name);
-  }
-
-  @Override
   public URL getResource(String name) {
     System.out.println("getResource : " + name);
 
-    for (String logPrefix : logPrefixList) {
-      if (name.startsWith(logPrefix.replaceAll("\\.", "/"))) {
-        return findResource(name);
-      }
-    }
+//    for (String logPrefix : logPrefixList) {
+//      if (name.startsWith(logPrefix.replaceAll("\\.", "/"))) {
+//        return findResource(name);
+//      }
+//    }
     return super.getResource(name);
   }
 
@@ -125,18 +99,18 @@ public class LogClassLoader extends URLClassLoader {
   public Enumeration<URL> getResources(String name) throws IOException {
     System.out.println("getResources : " + name);
 
-    for (String logPrefix : logPrefixList) {
-      if (name.startsWith(logPrefix.replaceAll("\\.", "/"))) {
-        return findResources(name);
-      }
-    }
+//    for (String logPrefix : logPrefixList) {
+//      if (name.startsWith(logPrefix.replaceAll("\\.", "/"))) {
+//        return findResources(name);
+//      }
+//    }
     return super.getResources(name);
   }
 
   public static synchronized void initDefaultLoader() {
     if (DEFAULT_LOADER == null) {
       ClassLoader extensionClassLoader = ClassLoader.getSystemClassLoader().getParent();
-      DEFAULT_LOADER = new LogClassLoader(extensionClassLoader);
+      DEFAULT_LOADER = new LogClassLoader2(extensionClassLoader);
     }
   }
 
